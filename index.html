@@ -1,0 +1,384 @@
+<!DOCTYPE html>  <!-- needed to support IE9 -->
+<html>
+<head>
+<script type="text/javascript" src="dygraph-combined.js"></script>
+</head>
+<body>
+
+<h3>Graphics stats collected from Firefox crash reports</h3>
+
+<h4>Table of contents</h4>
+<ul>
+<li><a href="#features">Features</a></li>
+<li><a href="#legend">Legend</a></li>
+<li><a href="#all">General results over all operating systems</a></li>
+<li><a href="#win-all">Windows results over all Windows versions</a></li>
+<li><a href="#win81">Windows 8.1 results</a></li>
+<li><a href="#win8">Windows 8.0 results</a></li>
+<li><a href="#win7">Windows 7 results</a></li>
+<li><a href="#winvista">Windows vista results</a></li>
+<li><a href="#winxp">Windows XP results</a></li>
+<li><a href="#mac">Mac OS X results</a></li>
+<li><a href="#gnulinux">Linux (GNU) results</a></li>
+<li><a href="#android">Android results</a></li>
+<li><a href="#webgl-attempts">Percentage of sessions where WebGL context creation was attempted</a></li>
+<li><a href="#os-market-share">OS Market share among Firefox crashers</a></li>
+<li><a href="#desktop-gpu-vendor-market-share">Desktop GPU vendor market share among Firefox crashers</a></li>
+<li><a href="#mobile-gpu-vendor-market-share">Mobile GPU vendor market share among Firefox crashers</a></li>
+<li><a href="#os-market-share">OS Market share among Firefox crashers</a></li>
+<li><a href="#num-reports">Number of crash reports each day</a></li>
+<li><a href="#methodology">Methodology</a></li>
+</ul>
+
+<a name="features">
+<h4>Features</h4>
+<ul>
+  <li><font color=#C08040><b>WebGL</b></font> counts the percentage of sessions that have successfully created at least one WebGL context, among the sessions that made any attempt. Because this is only counting sessions attempting WebGL, which overall only a minority of sessions do as of 2014, this is biased towards users with recent machines and software, whence the relatively high rates.
+  <li><font color=#000000><b>Accelerated Layers</b></font> counts the percentage of users running with OpenGL or Direct3D Layers. On all OSes except desktop Linux, this is always attempted by all sessions, aside from early startup crashes which we don't count. These curve therefore represent almost all of the user base. On Windows, we may be using either Direct3D 9 or, on Windows Vista and newer, <font color=#007000><b>Direct3D 10</b></font> or <font color=#00A0A0><b>Direct3D 11</b></font> as represented by the corresponding curves. Direct3D 9 does not allow for fast (readback-free) compositing of WebGL canvases, so the Direct3D 10 and Direct3D 11 curves are important to understand the proportion of users who can enjoy heavy WebGL content in good conditions on Windows.
+  </li>
+</ul>
+
+<a name="legend">
+<h4>Legend</h4>
+<ul>
+<li>The vertical axis is the success rate, and the unit is percentage. That is, the ratio of people who actually get the feature over people who try to get it.</li>
+<li>The horizontal axis is time.</li>
+<li>Mouse over the graph to show the color code.</li>
+</ul>
+
+<a name="all">
+<h4>Graphics features success rates over all operating systems</h4>
+
+<i>Mouse over to highlight individual values. Click and drag to zoom. Double-click to zoom back out. Change the number and hit enter to adjust the averaging period.</i>
+
+<div id="graph-all" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_all = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-all"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-all.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="win-all">
+<h4>Graphics features success rates on Windows, over all Windows versions</h4>
+<div id="graph-win-all" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_win_all = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-win-all"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-win-all.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="win81">
+<h4>Graphics features success rates on Windows 8.1</h4>
+<div id="graph-win81" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_win81 = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-win81"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-win81.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000", "#007000", "#00A0A0"]
+    }
+  );
+</script>
+
+<a name="win8">
+<h4>Graphics features success rates on Windows 8.0</h4>
+<div id="graph-win8" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_win8 = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-win8"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-win8.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000", "#007000", "#00A0A0"]
+    }
+  );
+</script>
+
+<a name="win7">
+<h4>Graphics features success rates on Windows 7</h4>
+<div id="graph-win7" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_win7 = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-win7"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-win7.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000", "#007000", "#00A0A0"]
+    }
+  );
+</script>
+
+<a name="winvista">
+<h4>Graphics features success rates on Windows Vista</h4>
+<div id="graph-winvista" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_winvista = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-winvista"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-winvista.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000", "#007000", "#00A0A0"]
+    }
+  );
+</script>
+
+<a name="winxp">
+<h4>Graphics features success rates on Windows XP</h4>
+<div id="graph-winxp" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_winxp = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-winxp"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-winxp.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="mac">
+<h4>Graphics features success rates on Mac OS X</h4>
+
+Note that the WebGL graph on Mac includes all our Mac users, including Mac OS 10.5
+users still using old, unsupported Firefox versions as we discontinued 10.5 support.
+These 10.5 users still represent 14% of our Mac crash reports as of April 2014.
+The WebGL success rate for 10.5 users is exactly 0%.<br/><br/>
+
+The Layers graph on the other hand only includes 10.6+ users. The dip in early 2014
+is <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=999445">bug 999445</a>.
+It's a bug affecting Firefox 27 to 29, fixed in Firefox 30.<br/><br/>
+
+<div id="graph-mac" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_mac = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-mac"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-mac.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="gnulinux">
+<h4>Graphics features success rates on Linux (GNU)</h4>
+<div id="graph-gnulinux" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-gnulinux"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-gnulinux.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="android">
+<h4>Graphics features success rates on Android</h4>
+<div id="graph-android" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-android"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-android.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#C08040", "#000000"]
+    }
+  );
+</script>
+
+<a name="webgl-attempts">
+<h4>Percentage of sessions where WebGL context creation was attempted</h4>
+<div id="graph-webgl-attempts" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-webgl-attempts"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-webgl-attempts.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 20],
+      colors: ["#C08040"]
+    }
+  );
+</script>
+
+<a name="os-market-share">
+<h4>OS Market share among Firefox crashers</h4>
+<div id="graph-os-market-share" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-os-market-share"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-os-market-share.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#700070", "#a000a0", "#e030ff", "#7010ff", "#0000ff", "#ff0000", "#00b000", "#ff7000"]
+    }
+  );
+</script>
+
+<a name="desktop-gpu-vendor-market-share">
+<h4>Desktop GPU vendor market share among Firefox crashers</h4>
+<div id="graph-desktop-gpu-vendor-market-share" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-desktop-gpu-vendor-market-share"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-desktop-gpuvendor-market-share.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#0000ff", "#00ff00", "#ff0000", "#808000", "#800080", "#008080"]
+    }
+  );
+</script>
+
+<a name="mobile-gpu-vendor-market-share">
+<h4>Mobile GPU vendor market share among Firefox crashers</h4>
+<div id="graph-android-gpu-vendor-market-share" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-android-gpu-vendor-market-share"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-android-gpuvendor-market-share.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#0000ff", "#4080a0", "#00ff00", "#800080", "#ff0000", "#703010", "#ff8000", "#404040", "#808080", "#ff00ff"]
+    }
+  );
+</script>
+
+<a name="num-reports">
+<h4>Number of crash reports each day</h4>
+<div id="graph-num-reports" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-num-reports"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-num-reports.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 9000000],
+      colors: ["#000000"]
+    }
+  );
+</script>
+
+<a name="methodology">
+<h4>Methodology</h4>
+
+<a href="https://crash-stats.mozilla.com/products/Firefox">Crash reports</a> contain information about which graphics features have been attempted, and which ones successfully initialized. This is true even if the crash itself has nothing to do with graphics features.<br/><br/>
+
+By <a href="https://crash-analysis.mozilla.com/crash_analysis/">analyzing</a> these crash reports, we determine, among all crash reports sent on a given day, the number of crash reports reporting that a graphics feature had been attempted, and the number of crash reports where it had successfully initialized. The ratio between these two values is what is shown below as "success rate" percentage.<br/><br/>
+
+Obviously, getting this data from crash reports biases the results to a certain extent. Graphics features might be correlated with crashiness, for example, although <a href="https://crash-stats.mozilla.com/products/Firefox">crash-stats</a> suggests that's not too marked.
