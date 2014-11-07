@@ -5,7 +5,7 @@ Generates Mozilla graphics stats from crash data
 
 A copy of the resulting stats is hosted there:
 
-  http://people.mozilla.org/~bjacob/gfx_features_stats/
+  http://people.mozilla.org/~bgirard/gfx_features_stats/
 
 How to build and generate stats
 ===============================

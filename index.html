@@ -7,7 +7,7 @@
 
 <h3>Graphics stats collected from Firefox crash reports</h3>
 
-The code generating this data is <a href="https://github.com/bjacob/gfx-stats">on Github</a>.<br/><br/>
+The code generating this data is <a href="https://github.com/bgirard/gfx-stats">on Github</a>.<br/><br/>
 
 <h4>Table of contents</h4>
 <ul>
@@ -379,10 +379,14 @@ It's a bug affecting Firefox 27 to 29, fixed in Firefox 30.<br/><br/>
 <a name="methodology">
 <h4>Methodology</h4>
 
-The code generating this data is <a href="https://github.com/bjacob/gfx-stats">on Github</a>.<br/><br/>
+The code generating this data is <a href="https://github.com/bgirard/gfx-stats">on Github</a>.<br/><br/>
 
 <a href="https://crash-stats.mozilla.com/products/Firefox">Crash reports</a> contain information about which graphics features have been attempted, and which ones successfully initialized. This is true even if the crash itself has nothing to do with graphics features.<br/><br/>
 
 By <a href="https://crash-analysis.mozilla.com/crash_analysis/">analyzing</a> these crash reports, we determine, among all crash reports sent on a given day, the number of crash reports reporting that a graphics feature had been attempted, and the number of crash reports where it had successfully initialized. The ratio between these two values is what is shown below as "success rate" percentage.<br/><br/>
 
 Obviously, getting this data from crash reports biases the results to a certain extent. Graphics features might be correlated with crashiness, for example, although <a href="https://crash-stats.mozilla.com/products/Firefox">crash-stats</a> suggests that's not too marked.
+
+<a name="credit">
+<h4>Credits</h4>
+Credit goes to bjacob for creating this tool.
