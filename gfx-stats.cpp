@@ -427,7 +427,24 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
   }
   strcat(wanted_first_line, "\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -435,18 +452,10 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, wanted_first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
-      return;
-    }
-  } else {
+  if (should_write_first_line) {
     fprintf(file, "%s", wanted_first_line);
   }
- 
+
   fprintf(file, "%s,%.2f", date, webgl.success_percentage(os_bitfield));
   if (enable_layers_stats_for_os_bitfield(os_bitfield))
     fprintf(file, ",%.2f", layers.success_percentage(os_bitfield));
