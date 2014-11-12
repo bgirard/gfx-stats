@@ -471,11 +471,28 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
 void output_webgl_attempt_percentage(const char *date, uint32_t os_bitfield, const char *filename)
 {
   static const size_t max_output_line_size = 256;
-  char first_line[max_output_line_size];
-  snprintf(first_line, max_output_line_size,
+  char wanted_first_line[max_output_line_size];
+  snprintf(wanted_first_line, max_output_line_size,
            "date,WebGL attempt rate\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -483,16 +500,8 @@ void output_webgl_attempt_percentage(const char *date, uint32_t os_bitfield, con
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, first_line);
-      return;
-    }
-  } else {
-    fprintf(file, "%s", first_line);
+  if (should_write_first_line) {
+    fprintf(file, "%s", wanted_first_line);
   }
 
   fprintf(file, "%s,%.2f\n", date, webgl.attempt_percentage(os_bitfield));
@@ -503,11 +512,28 @@ void output_webgl_attempt_percentage(const char *date, uint32_t os_bitfield, con
 void output_os_market_share(const char *date, const char *filename)
 {
   static const size_t max_output_line_size = 256;
-  char first_line[max_output_line_size];
-  snprintf(first_line, max_output_line_size,
+  char wanted_first_line[max_output_line_size];
+  snprintf(wanted_first_line, max_output_line_size,
            "date,Windows 8.1,Windows 8.0,Windows 7,Windows Vista,Windows XP,Mac OSX,Linux,Android\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -515,16 +541,8 @@ void output_os_market_share(const char *date, const char *filename)
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, first_line);
-      return;
-    }
-  } else {
-    fprintf(file, "%s", first_line);
+  if (should_write_first_line) {
+    fprintf(file, "%s", wanted_first_line);
   }
 
   fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
@@ -545,11 +563,28 @@ void output_os_market_share(const char *date, const char *filename)
 void output_desktop_gpuvendor_market_share(const char *date, const char *filename)
 {
   static const size_t max_output_line_size = 256;
-  char first_line[max_output_line_size];
-  snprintf(first_line, max_output_line_size,
+  char wanted_first_line[max_output_line_size];
+  snprintf(wanted_first_line, max_output_line_size,
            "date,Intel,NVIDIA,AMD (ATI),SIS,S3,VIA\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -557,16 +592,8 @@ void output_desktop_gpuvendor_market_share(const char *date, const char *filenam
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, first_line);
-      return;
-    }
-  } else {
-    fprintf(file, "%s", first_line);
+  if (should_write_first_line) {
+    fprintf(file, "%s", wanted_first_line);
   }
 
   fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
@@ -585,11 +612,28 @@ void output_desktop_gpuvendor_market_share(const char *date, const char *filenam
 void output_android_gpuvendor_market_share(const char *date, const char *filename)
 {
   static const size_t max_output_line_size = 256;
-  char first_line[max_output_line_size];
-  snprintf(first_line, max_output_line_size,
+  char wanted_first_line[max_output_line_size];
+  snprintf(wanted_first_line, max_output_line_size,
            "date,Qualcomm (Adreno),ARM (Mali),NVIDIA (Tegra),ImgTec (PowerVR),Vivante (also Marvell), Broadcom (VideoCore), Hisilicon, Intel, AMD, Advanced Graphics\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -597,16 +641,8 @@ void output_android_gpuvendor_market_share(const char *date, const char *filenam
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, first_line);
-      return;
-    }
-  } else {
-    fprintf(file, "%s", first_line);
+  if (should_write_first_line) {
+    fprintf(file, "%s", wanted_first_line);
   }
 
   fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
@@ -629,11 +665,28 @@ void output_android_gpuvendor_market_share(const char *date, const char *filenam
 void output_num_reports(const char *date, const char *filename)
 {
   static const size_t max_output_line_size = 256;
-  char first_line[max_output_line_size];
-  snprintf(first_line, max_output_line_size,
+  char wanted_first_line[max_output_line_size];
+  snprintf(wanted_first_line, max_output_line_size,
           "date,Number of reports\n");
 
-  FILE *file = fopen(filename, "a+");
+  char line[max_output_line_size];
+
+  FILE *rofile = fopen(filename, "r");
+
+  bool should_write_first_line = true;
+  if (rofile && fgets(line, max_output_line_size, rofile))
+  {
+    if (strcmp(line, wanted_first_line))
+    {
+      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, wanted_first_line);
+      return;
+    }
+    should_write_first_line = false;
+  }
+
+  fclose(rofile);
+
+  FILE *file = fopen(filename, "a");
 
   if (!file)
   {
@@ -641,16 +694,8 @@ void output_num_reports(const char *date, const char *filename)
     exit(1);
   }
 
-  char line[max_output_line_size];
-  if (fgets(line, max_output_line_size, file))
-  {
-    if (strcmp(line, first_line))
-    {
-      fprintf(stderr, "error: first line of %s is:\n%sexpected:\n%sNot appending data.\n", filename, line, first_line);
-      return;
-    }
-  } else {
-    fprintf(file, "%s", first_line);
+  if (should_write_first_line) {
+    fprintf(file, "%s", wanted_first_line);
   }
 
   fprintf(file, "%s,%d\n",
