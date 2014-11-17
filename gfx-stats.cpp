@@ -330,6 +330,8 @@ feature webgl("WebGL");
 feature layers("Layers");
 feature d3d10layers("D3D10 Layers", layers);
 feature d3d11layers("D3D11 Layers", layers);
+feature d2d("D2D");
+feature d2d11("D2D1.1");
 
 EnumeratedArray<GPUVendor, GPUVendor::count, int>
   desktop_gpuvendor_reports,
@@ -399,6 +401,15 @@ bool enable_d3d10layers_stats_for_os_bitfield(uint32_t os_bitfield)
   return os_bitfield == (os_bitfield & mask);
 }
 
+bool enable_d2d_stats_for_os_bitfield(uint32_t os_bitfield)
+{
+  uint32_t mask = bit(OS::winvista) |
+                  bit(OS::win7) |
+                  bit(OS::win8) |
+                  bit(OS::win81);
+  return os_bitfield == (os_bitfield & mask);
+}
+
 bool enable_d3d11layers_stats_for_os_bitfield(uint32_t os_bitfield)
 {
   return enable_d3d10layers_stats_for_os_bitfield(os_bitfield);
@@ -424,6 +435,13 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
   {
     strcat(wanted_first_line, ",");
     strcat(wanted_first_line, d3d11layers.name);
+  }
+  if (enable_d2d_stats_for_os_bitfield(os_bitfield))
+  {
+    strcat(wanted_first_line, ",");
+    strcat(wanted_first_line, d2d.name);
+    strcat(wanted_first_line, ",");
+    strcat(wanted_first_line, d2d11.name);
   }
   strcat(wanted_first_line, "\n");
 
@@ -463,6 +481,10 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     fprintf(file, ",%.2f", d3d10layers.success_percentage(os_bitfield));
   if (enable_d3d11layers_stats_for_os_bitfield(os_bitfield))
     fprintf(file, ",%.2f", d3d11layers.success_percentage(os_bitfield));
+  if (enable_d2d_stats_for_os_bitfield(os_bitfield))
+    fprintf(file, ",%.2f", d2d.success_percentage(os_bitfield));
+  if (enable_d2d_stats_for_os_bitfield(os_bitfield))
+    fprintf(file, ",%.2f", d2d11.success_percentage(os_bitfield));
   fprintf(file, "\n");
 
   fclose(file);
@@ -823,6 +845,8 @@ To get help, do:\n\
     layers.process(line, os);
     d3d10layers.process(line, os);
     d3d11layers.process(line, os);
+    d2d.process(line, os);
+    d2d11.process(line, os);
     process_gpuvendors(line, os);
   }
 
