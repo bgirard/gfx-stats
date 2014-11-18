@@ -27,7 +27,7 @@ function max_bg_procs {
 INDEX_HTML=`curl -s $CRASH_URL`
 
 while read -r line; do
-  if [[ "${line:0:84}" == "<tr><td valign=\"top\"><img src=\"/icons/folder.gif\" alt=\"[DIR]\"></td><td><a href=\"2014" ]] ;
+  if [[ "${line:0:82}" == "<tr><td valign=\"top\"><img src=\"/icons/folder.gif\" alt=\"[DIR]\"></td><td><a href=\"20" ]] ;
   then
     CRASH_DATE=${line:80:8}
     CRASH_FILE=$CRASH_DATE-pub-crashdata.csv.gz
