@@ -25,8 +25,8 @@ fi
 
 for f in `ls *-pub-crashdata.csv.gz`
 do
-  if [[ "$f" == 20141* ]]
-  then
+  #if [[ "$f" == 2014* ]]
+  #then
     max_bg_procs 10
     date="`echo $f | cut -d '-' -f 1`"
     if [[ "$dates_already_recorded" != *$date* ]]
@@ -34,5 +34,5 @@ do
       echo $f
       gzip -dc $f | ./gfx-stats --stdin-with-date $f &
     fi
-  fi
+  #fi
 done

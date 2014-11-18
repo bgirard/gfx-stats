@@ -25,9 +25,9 @@ The code generating this data is <a href="https://github.com/bgirard/gfx-stats">
 <li><a href="#android">Android results</a></li>
 <li><a href="#webgl-attempts">Percentage of sessions where WebGL context creation was attempted</a></li>
 <li><a href="#os-market-share">OS Market share among Firefox crashers</a></li>
+<li><a href="#mac-os-market-share">Mac OS Market share among Firefox crashers</a></li>
 <li><a href="#desktop-gpu-vendor-market-share">Desktop GPU vendor market share among Firefox crashers</a></li>
 <li><a href="#mobile-gpu-vendor-market-share">Mobile GPU vendor market share among Firefox crashers</a></li>
-<li><a href="#os-market-share">OS Market share among Firefox crashers</a></li>
 <li><a href="#num-reports">Number of crash reports each day</a></li>
 <li><a href="#methodology">Methodology</a></li>
 </ul>
@@ -303,6 +303,27 @@ It's a bug affecting Firefox 27 to 29, fixed in Firefox 30.<br/><br/>
 
     // CSV or path to a CSV file.
     "gfx-stats-os-market-share.csv",
+    {
+      rollPeriod: 1,
+      showRoller: true,
+      labelsSeparateLines: true,
+      valueRange: [0, 110],
+      colors: ["#700070", "#a000a0", "#e030ff", "#7010ff", "#0000ff", "#ff0000", "#00b000", "#ff7000"]
+    }
+  );
+</script>
+
+<a name="mac-os-market-share">
+<h4>Mac OS Market share among Firefox crashers</h4>
+<div id="graph-mac-os-market-share" style="width:90%; height:400px;"></div>
+<script type="text/javascript">
+  g_gnulinux = new Dygraph(
+
+    // containing div
+    document.getElementById("graph-mac-os-market-share"),
+
+    // CSV or path to a CSV file.
+    "gfx-stats-mac-market-share.csv",
     {
       rollPeriod: 1,
       showRoller: true,

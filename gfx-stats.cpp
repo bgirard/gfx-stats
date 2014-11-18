@@ -105,7 +105,14 @@ enum class OS {
   winvista,
   winxp,
   win_other,
-  mac,
+  mac104,
+  mac105,
+  mac106,
+  mac107,
+  mac108,
+  mac109,
+  mac1010,
+  mac_other,
   gnulinux,
   android,
   count
@@ -141,6 +148,18 @@ uint32_t all_windows_bit()
          | (bit(OS::winvista))
          | (bit(OS::winxp))
          | (bit(OS::win_other));
+}
+
+uint32_t all_mac_bit()
+{
+  return (bit(OS::mac104))
+         | (bit(OS::mac105))
+         | (bit(OS::mac106))
+         | (bit(OS::mac107))
+         | (bit(OS::mac108))
+         | (bit(OS::mac109))
+         | (bit(OS::mac1010))
+         | (bit(OS::mac_other));
 }
 
 enum class GPUVendor {
@@ -228,9 +247,25 @@ OS os_for_line(const char *line)
     else
       return OS::win_other;
   }
-  else if (strstr(line, "Mac OS X"))
+  else if (const char *occurence = strstr(line, "Mac OS X"))
   {
-    return OS::mac;
+    if (strstr(occurence, "Mac OS X\t10.4") == occurence)
+      return OS::mac104;
+    else if (strstr(occurence, "Mac OS X\t10.5") == occurence)
+      return OS::mac105;
+    else if (strstr(occurence, "Mac OS X\t10.6") == occurence)
+      return OS::mac106;
+    else if (strstr(occurence, "Mac OS X\t10.7") == occurence)
+      return OS::mac107;
+    else if (strstr(occurence, "Mac OS X\t10.8") == occurence)
+      return OS::mac108;
+    else if (strstr(occurence, "Mac OS X\t10.9") == occurence)
+      return OS::mac109;
+    else if (strstr(occurence, "Mac OS X\t10.10") == occurence)
+      return OS::mac1010;
+    else {
+      return OS::mac_other;
+    }
   }
   else if (strstr(line, "Linux"))
   {
@@ -453,26 +488,19 @@ EnumeratedArray<GPUVendor, GPUVendor::count, int>
 void process_gpuvendors(const char *line, OS os)
 {
   switch (os) {
-    case OS::win81:
-    case OS::win8:
-    case OS::win7:
-    case OS::winvista:
-    case OS::winxp:
-    case OS::win_other:
-    case OS::mac:
     // gnulinux uses a different format, just omit it.
-    {
-      GPUVendor v = desktop_gpuvendor_for_line(line);
-      desktop_gpuvendor_reports[v]++;
+    case OS::gnulinux:
       break;
-    }
     case OS::android: {
       GPUVendor v = android_gpuvendor_for_line(line);
       android_gpuvendor_reports[v]++;
       break;
     }
-    default:
+    default: {
+      GPUVendor v = desktop_gpuvendor_for_line(line);
+      desktop_gpuvendor_reports[v]++;
       break;
+    }
   }
 }
 
@@ -552,6 +580,10 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     strcat(wanted_first_line, d2d.name);
     strcat(wanted_first_line, ",");
     strcat(wanted_first_line, d2d11.name);
+    strcat(wanted_first_line, ",");
+    strcat(wanted_first_line, "D2D Usage");
+    strcat(wanted_first_line, ",");
+    strcat(wanted_first_line, "D2D1.1 Usage");
   }
   strcat(wanted_first_line, "\n");
 
@@ -591,10 +623,12 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     fprintf(file, ",%.2f", d3d10layers.success_percentage(os_bitfield));
   if (enable_d3d11layers_stats_for_os_bitfield(os_bitfield))
     fprintf(file, ",%.2f", d3d11layers.success_percentage(os_bitfield));
-  if (enable_d2d_stats_for_os_bitfield(os_bitfield))
+  if (enable_d2d_stats_for_os_bitfield(os_bitfield)) {
     fprintf(file, ",%.2f", d2d.success_percentage(os_bitfield));
-  if (enable_d2d_stats_for_os_bitfield(os_bitfield))
     fprintf(file, ",%.2f", d2d11.success_percentage(os_bitfield));
+    fprintf(file, ",%.2f", d2d.active_percentage(os_bitfield));
+    fprintf(file, ",%.2f", d2d11.active_percentage(os_bitfield));
+  }
   fprintf(file, "\n");
 
   fclose(file);
@@ -641,12 +675,17 @@ void output_webgl_attempt_percentage(const char *date, uint32_t os_bitfield, con
   fclose(file);
 }
 
-void output_os_market_share(const char *date, const char *filename)
+void output_os_market_share(const char *date, uint32_t bitfield, const char *filename)
 {
   static const size_t max_output_line_size = 256;
   char wanted_first_line[max_output_line_size];
-  snprintf(wanted_first_line, max_output_line_size,
-           "date,Windows 8.1,Windows 8.0,Windows 7,Windows Vista,Windows XP,Mac OSX,Linux,Android\n");
+  if (bitfield != all_mac_bit()) {
+    snprintf(wanted_first_line, max_output_line_size,
+             "date,Windows 8.1,Windows 8.0,Windows 7,Windows Vista,Windows XP,Mac OSX,Linux,Android\n");
+  } else {
+    snprintf(wanted_first_line, max_output_line_size,
+             "date,Mac10.4,Mac10.5,Mac10.6,Mac10.7,Mac10.8,Mac10.9,Mac10.10,MacOthers\n");
+  }
 
   char line[max_output_line_size];
 
@@ -677,17 +716,32 @@ void output_os_market_share(const char *date, const char *filename)
     fprintf(file, "%s", wanted_first_line);
   }
 
-  fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
-          date,
-          webgl.os_market_share(bit(OS::win81)),
-          webgl.os_market_share(bit(OS::win8)),
-          webgl.os_market_share(bit(OS::win7)),
-          webgl.os_market_share(bit(OS::winvista)),
-          webgl.os_market_share(bit(OS::winxp)),
-          webgl.os_market_share(bit(OS::mac)),
-          webgl.os_market_share(bit(OS::gnulinux)),
-          webgl.os_market_share(bit(OS::android))
-         );
+  if (bitfield == all_mac_bit()) {
+    float mac_share = webgl.os_market_share(all_mac_bit()) / 100.f;
+    fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+            date,
+            webgl.os_market_share(bit(OS::mac104)) / mac_share,
+            webgl.os_market_share(bit(OS::mac105)) / mac_share,
+            webgl.os_market_share(bit(OS::mac106)) / mac_share,
+            webgl.os_market_share(bit(OS::mac107)) / mac_share,
+            webgl.os_market_share(bit(OS::mac108)) / mac_share,
+            webgl.os_market_share(bit(OS::mac109)) / mac_share,
+            webgl.os_market_share(bit(OS::mac1010)) / mac_share,
+            webgl.os_market_share(bit(OS::mac_other)) / mac_share
+           );
+  } else {
+    fprintf(file, "%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f\n",
+            date,
+            webgl.os_market_share(bit(OS::win81)),
+            webgl.os_market_share(bit(OS::win8)),
+            webgl.os_market_share(bit(OS::win7)),
+            webgl.os_market_share(bit(OS::winvista)),
+            webgl.os_market_share(bit(OS::winxp)),
+            webgl.os_market_share(all_mac_bit()),
+            webgl.os_market_share(bit(OS::gnulinux)),
+            webgl.os_market_share(bit(OS::android))
+           );
+  }
 
   fclose(file);
 }
@@ -968,13 +1022,14 @@ To get help, do:\n\
   output(date, bit(OS::win7),        "gfx-stats-win7.csv");
   output(date, bit(OS::winvista),    "gfx-stats-winvista.csv");
   output(date, bit(OS::winxp),       "gfx-stats-winxp.csv");
-  output(date, bit(OS::mac),         "gfx-stats-mac.csv");
+  output(date, all_mac_bit(),        "gfx-stats-mac.csv");
   output(date, bit(OS::gnulinux),    "gfx-stats-gnulinux.csv");
   output(date, bit(OS::android),     "gfx-stats-android.csv");
   output(date, all_windows_bit(),    "gfx-stats-win-all.csv");
   output(date, uint32_t(-1),         "gfx-stats-all.csv");
   output_webgl_attempt_percentage(date, uint32_t(-1), "gfx-stats-webgl-attempts.csv");
-  output_os_market_share(date, "gfx-stats-os-market-share.csv");
+  output_os_market_share(date, uint32_t(1), "gfx-stats-os-market-share.csv");
+  output_os_market_share(date, all_mac_bit(), "gfx-stats-mac-market-share.csv");
   output_num_reports(date, "gfx-stats-num-reports.csv");
   output_desktop_gpuvendor_market_share(date, "gfx-stats-desktop-gpuvendor-market-share.csv");
   output_android_gpuvendor_market_share(date, "gfx-stats-android-gpuvendor-market-share.csv");
