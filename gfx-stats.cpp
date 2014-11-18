@@ -45,6 +45,16 @@ uint32_t bit(OS os)
   return uint32_t(1) << int(os);
 }
 
+uint32_t all_windows_bit()
+{
+  return (bit(OS::win81))
+         | (bit(OS::win8))
+         | (bit(OS::win7))
+         | (bit(OS::winvista))
+         | (bit(OS::winxp))
+         | (bit(OS::win_other));
+}
+
 enum class GPUVendor {
   unknown = 0,
   intel,
@@ -280,6 +290,21 @@ struct feature
                              : 0.f;
   }
 
+  float active_percentage(uint32_t os_bitfield)
+  {
+    int combined_successes = 0, combined_reports = 0;
+    for (OS os = OS_begin(); os != OS_end(); os = OS_next(os))
+    {
+      if (os_bitfield & bit(os))
+      {
+        combined_reports += reports[os];
+        combined_successes += successes[os];
+      }
+    }
+    return combined_reports ? 100.f * combined_successes / combined_reports
+                            : 0.f;
+  }
+
   float attempt_percentage(uint32_t os_bitfield)
   {
     assert(&featureCountingAttempts == this);
@@ -403,10 +428,7 @@ bool enable_d3d10layers_stats_for_os_bitfield(uint32_t os_bitfield)
 
 bool enable_d2d_stats_for_os_bitfield(uint32_t os_bitfield)
 {
-  uint32_t mask = bit(OS::winvista) |
-                  bit(OS::win7) |
-                  bit(OS::win8) |
-                  bit(OS::win81);
+  uint32_t mask = all_windows_bit();
   return os_bitfield == (os_bitfield & mask);
 }
 
@@ -861,13 +883,8 @@ To get help, do:\n\
   output(date, bit(OS::mac),         "gfx-stats-mac.csv");
   output(date, bit(OS::gnulinux),    "gfx-stats-gnulinux.csv");
   output(date, bit(OS::android),     "gfx-stats-android.csv");
-  output(date, (bit(OS::win81))
-             | (bit(OS::win8))
-             | (bit(OS::win7))
-             | (bit(OS::winvista))
-             | (bit(OS::winxp))
-             | (bit(OS::win_other)), "gfx-stats-win-all.csv");
-  output(date, uint32_t(-1), "gfx-stats-all.csv");
+  output(date, all_windows_bit(),    "gfx-stats-win-all.csv");
+  output(date, uint32_t(-1),         "gfx-stats-all.csv");
   output_webgl_attempt_percentage(date, uint32_t(-1), "gfx-stats-webgl-attempts.csv");
   output_os_market_share(date, "gfx-stats-os-market-share.csv");
   output_num_reports(date, "gfx-stats-num-reports.csv");

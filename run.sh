@@ -9,10 +9,13 @@ fi
 
 for f in `ls *-pub-crashdata.csv.gz`
 do
-  date="`echo $f | cut -d '-' -f 1`"
-  if [[ "$dates_already_recorded" != *$date* ]]
-  then
-    echo $f
-    gzip -dc $f | ./gfx-stats --stdin-with-date $f
-  fi
+  #if [[ "$f" == 20141* ]]
+  #then
+    date="`echo $f | cut -d '-' -f 1`"
+    if [[ "$dates_already_recorded" != *$date* ]]
+    then
+      echo $f
+      gzip -dc $f | ./gfx-stats --stdin-with-date $f
+    fi
+  #fi
 done
