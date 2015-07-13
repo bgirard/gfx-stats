@@ -11,10 +11,11 @@
 
 typedef unsigned chartype;
 
+#ifdef __APPLE__
 #undef strstr
 
 // The OSX built in version is slow so use this one
-char *
+const char *
 strstr(
      const char *phaystack,
      const char *pneedle)
@@ -96,6 +97,7 @@ foundneedle:
 ret0:
   return 0;
 }
+#endif
 
 enum class OS {
   unknown = 0,
