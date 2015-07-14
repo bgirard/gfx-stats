@@ -47,7 +47,7 @@ typedef unsigned chartype;
 #undef strstr
 
 // The OSX built in version is slow so use this one
-const char *
+char *
 strstr(
      const char *phaystack,
      const char *pneedle)
