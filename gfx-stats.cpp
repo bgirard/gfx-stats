@@ -480,6 +480,7 @@ feature d3d10layers("D3D10 Layers", layers);
 feature d3d11layers("D3D11 Layers", layers);
 feature d2d("D2D");
 feature d2d11("D2D1.1");
+feature wgl("WGL");
 
 EnumeratedArray<GPUVendor, GPUVendor::count, int>
   desktop_gpuvendor_reports,
@@ -548,6 +549,12 @@ bool enable_d2d_stats_for_os_bitfield(uint32_t os_bitfield)
   return os_bitfield == (os_bitfield & mask);
 }
 
+bool enable_wgl_stats_for_os_bitfield(uint32_t os_bitfield)
+{
+  uint32_t mask = all_windows_bit();
+  return os_bitfield == (os_bitfield & mask);
+}
+
 bool enable_d3d11layers_stats_for_os_bitfield(uint32_t os_bitfield)
 {
   return enable_d3d10layers_stats_for_os_bitfield(os_bitfield);
@@ -584,6 +591,11 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     strcat(wanted_first_line, "D2D Usage");
     strcat(wanted_first_line, ",");
     strcat(wanted_first_line, "D2D1.1 Usage");
+  }
+  if (enable_wgl_stats_for_os_bitfield(os_bitfield))
+  {
+    strcat(wanted_first_line, ",");
+    strcat(wanted_first_line, wgl.name);
   }
   strcat(wanted_first_line, "\n");
 
@@ -628,6 +640,9 @@ void output(const char *date, uint32_t os_bitfield, const char *filename)
     fprintf(file, ",%.2f", d2d11.success_percentage(os_bitfield));
     fprintf(file, ",%.2f", d2d.active_percentage(os_bitfield));
     fprintf(file, ",%.2f", d2d11.active_percentage(os_bitfield));
+  }
+  if (enable_wgl_stats_for_os_bitfield(os_bitfield)) {
+    fprintf(file, ",%.2f", wgl.active_percentage(os_bitfield));
   }
   fprintf(file, "\n");
 
@@ -1011,6 +1026,7 @@ To get help, do:\n\
     d3d11layers.process(line, os);
     d2d.process(line, os);
     d2d11.process(line, os);
+    wgl.process(line, os);
     process_gpuvendors(line, os);
   }
 
