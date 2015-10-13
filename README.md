@@ -16,15 +16,18 @@ Build gfx-stats.cpp as a standalone c++11 program, ensuring that the resulting e
   c++ gfx-stats.cpp -o gfx-stats --std=c++0x -O3 -DNDEBUG -Wall -Wextra -pedantic
 ```
 
-Download crashdata files from Mozilla's `crash-analysis` archives, to the same directory:
+Download crashdata files from Mozilla's `crash-stats` site, to the same directory:
 
-  https://crash-analysis.mozilla.com/crash_analysis/
+  https://crash-stats.mozilla.com/graphics_report/?date=YYYY-MM-DD
 
 For example:
 
 ```
-  wget --no-check-certificate https://crash-analysis.mozilla.com/crash_analysis/20140907/20140907-pub-crashdata.csv.gz
+  curl -H 'Auth-Token: XXXXXX' --compressed \
+  https://crash-stats.mozilla.com/graphics_report/?date=2014-09-07 > 20140907-pub-crashdata.csv.gz
 ```
+
+The API token you get from https://crash-stats.mozilla.com/api/tokens/
 
 Download as many per-day `.csv.gz` files as you wish.
 
