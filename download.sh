@@ -1,3 +1,7 @@
+# This script has been replaced by download.py
+# Kept around for legacy inspection.
+
+
 CRASH_URL="https://crash-analysis.mozilla.com/crash_analysis/"
 
 set -e
