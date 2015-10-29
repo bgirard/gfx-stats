@@ -5,6 +5,10 @@
 #include <cassert>
 #include <cstdint>
 #include <stdarg.h>
+#include <string>
+#include <vector>
+
+using namespace std;
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf c99_snprintf
@@ -272,8 +276,10 @@ OS os_for_line(const char *line)
       return OS::win81;
     else if (strstr(occurence, "Windows NT\t6.2") == occurence)
       return OS::win8;
-    else if (strstr(occurence, "Windows NT\t6.1") == occurence)
+    else if (strstr(occurence, "Windows NT\t6.1") == occurence) {
+      printf("win7\n");
       return OS::win7;
+    }
     else if (strstr(occurence, "Windows NT\t6.0") == occurence)
       return OS::winvista;
     else if (strstr(occurence, "Windows NT\t5.1") == occurence)
@@ -424,7 +430,7 @@ struct feature
       else if (*ptr == '+')
         succeeded = true;
     }
-    if (attempted)
+    if (attempted || succeeded)
       attempts[os] += weight;
     if (succeeded)
     {
@@ -941,6 +947,72 @@ void output_num_reports(const char *date, const char *filename)
   fclose(file);
 }
 
+void ParseCSV(const string& csvSource, vector<vector<string> >& lines)
+{
+  bool inQuote(false);
+  bool newLine(false);
+  string field;
+  lines.clear();
+  vector<string> line;
+
+  string::const_iterator aChar = csvSource.begin();
+  while (aChar != csvSource.end())
+  {
+    switch (*aChar)
+    {
+      case '"':
+        newLine = false;
+        inQuote = !inQuote;
+        break;
+
+      case ',':
+        newLine = false;
+        if (inQuote == true)
+        {
+          field += *aChar;
+        }
+        else
+        {
+          line.push_back(field);
+          field.clear();
+        }
+        break;
+
+      case '\n':
+      case '\r':
+        if (inQuote == true)
+        {
+          field += *aChar;
+        }
+        else
+        {
+          if (newLine == false)
+          {
+            line.push_back(field);
+            lines.push_back(line);
+            field.clear();
+            line.clear();
+            newLine = true;
+          }
+        }
+        break;
+
+      default:
+        newLine = false;
+        field.push_back(*aChar);
+        break;
+    }
+
+    aChar++;
+  }
+
+  if (field.size())
+    line.push_back(field);
+
+  if (line.size())
+    lines.push_back(line);
+}
+
 int main(int argc, char *argv[])
 {
   enum { max_input_line_size = 4096 };
@@ -1051,8 +1123,27 @@ To get help, do:\n\
     }
   }
 
+  string csvSource("");
   while(fgets(line, max_input_line_size, input))
   {
+    csvSource += string(line) + "\n";
+  }
+
+  vector<vector<string> > lines;
+  ParseCSV(csvSource, lines);
+
+  for (size_t i = 0; i < lines.size(); i++)
+  {
+    vector<string>& lineVector = lines[i];
+    string src;
+    for (size_t j = 0; j < lineVector.size(); j++) {
+      if (j != 0) {
+        src += ",";
+      }
+      src += lineVector[j];
+    }
+    strcpy(line, src.c_str());
+
     OS os = os_for_line(line);
     webgl.process(line, os);
     layers.process(line, os);

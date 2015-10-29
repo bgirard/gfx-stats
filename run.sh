@@ -23,6 +23,14 @@ then
 dates_already_recorded="`cat gfx-stats-all.csv|grep '^[0-9]\{4\}'|sed 's/\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\).*/\1\2\3/g'`"
 fi
 
+echo $dates_already_recorded
+
+for f in `ls gfx-stats*.csv`
+do
+  sed -i.bu '/^2015/d' "$f"
+done
+
+
 for f in `ls *-pub-crashdata.csv.gz`
 do
   #if [[ "$f" == 2014* ]]
@@ -32,6 +40,7 @@ do
     if [[ "$dates_already_recorded" != *$date* ]]
     then
       echo $f
+      echo "gzip -dc $f | ./gfx-stats --stdin-with-date $f"
       gzip -dc $f | ./gfx-stats --stdin-with-date $f &
     fi
   #fi
