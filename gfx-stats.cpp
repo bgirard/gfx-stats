@@ -277,7 +277,6 @@ OS os_for_line(const char *line)
     else if (strstr(occurence, "Windows NT\t6.2") == occurence)
       return OS::win8;
     else if (strstr(occurence, "Windows NT\t6.1") == occurence) {
-      printf("win7\n");
       return OS::win7;
     }
     else if (strstr(occurence, "Windows NT\t6.0") == occurence)
